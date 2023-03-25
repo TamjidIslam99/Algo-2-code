@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+#define N '\n'
+#define ll long long
+#define L size()
+using namespace std;
+struct suffix
+{
+    int ind;
+    char *suff;
+};
+int compare(struct suffix a,struct suffix b)
+{
+    if(strcmp(a.suff,b.suff)<0)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+int *buildarray(char *text,int n)
+{
+    struct suffix suffixes[n];
+    for(int i=0;i<n;i++)
+    {
+        suffixes[i].ind=i;
+        suffixes[i].suff=(text+i);
+    }
+    sort(suffixes,suffixes+n,compare);
+    int *suffixarr=new int[n];
+    for(int i=0;i<n;i++)
+    {
+        suffixarr[i]=suffixes[i].ind;
+    }
+    return suffixarr;
+}
+void printArr(int arr[],int n)
+{
+    for(int i=0;i<n;i++)
+    {
+        cout<<arr[i]<<" ";
+    }
+    cout<<N;
+}
+int main()
+{
+    char text[100];
+    cin>>text;
+    int n=strlen(text);
+    int *suffixarr=buildarray(text,n);
+    printArr(suffixarr,n);
+    return 0;
+}

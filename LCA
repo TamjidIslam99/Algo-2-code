@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+#define N '\n'
+#define L size()
+using namespace std;
+vector<int>adjl[1000];
+int parent[1000];
+void dfs(int n,int p=-1)
+{
+    parent[n]=p;
+    for(int child:adjl[n])
+    {
+        if(child==p)
+        {
+            continue;
+        }
+        dfs(child,n);
+    }
+}
+vector<int>path(int v)
+{
+    vector<int>ans;
+    while(v!=-1)
+    {
+        ans.push_back(v);
+        {
+            v=parent[v];
+        }
+    }
+    reverse(ans.begin(),ans.end());
+    return ans;
+}
+int main()
+{
+    freopen("txt.txt","r",stdin);
+    int n;
+    cin>>n;
+    for(int i=0;i<n-1;i++)
+    {
+        int j,k;
+        cin>>j>>k;
+        adjl[j].push_back(k);
+        adjl[k].push_back(j);
+    }
+    dfs(1);
+    int x,y;
+    cin>>x>>y;
+    vector<int>path_x=path(x);
+    vector<int>path_y=path(y);
+
+    int min_l=min(path_x.L,path_y.L);
+    int lca=-1;
+    for(int i=0;i<min_l;i++)
+    {
+        if(path_x[i]==path_y[i])
+        {
+            lca=path_x[i];
+        }
+        else
+        {
+            break;
+        }
+    }
+    cout<<lca<<N;
+
+}

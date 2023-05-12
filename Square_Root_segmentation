@@ -1,0 +1,211 @@
+#include <bits/stdc++.h>
+#define N '\n'
+
+using namespace std;
+const int n=1e4;
+int arr[n];
+int L[n];
+int block[n];
+int rn;
+int Query(int l,int r)
+{
+    int minn=INT_MAX;
+    int lb=(l-1)/rn+1;
+    int rb=(r-1)/rn+1;
+    for(int i=lb+1; i<=rb-1; i++)
+    {
+        if(L[i])
+        {
+            minn=min(minn,L[i]);
+        }
+        else
+        {
+            minn=min(minn,block[i]);
+        }
+    }
+    if(L[lb])
+    {
+        for(int i=rn*(lb-1)+1; i<=rn*lb; i++)
+        {
+            arr[i]=L[lb];
+        }
+        L[lb]=0;
+        block[lb]=INT_MAX;
+        for(int i=rn*(lb-1)+1; i<=rn*lb; i++)
+        {
+            block[lb]=min(block[lb],arr[i]);
+        }
+    }
+    for(int i=l; i<=min(r,lb*rn); i++)
+    {
+        minn=min(minn,arr[i]);
+    }
+
+    if(lb<=rn)
+    {
+        if(L[rb])
+        {
+            for(int i=rn*(rb-1)+1; i<=rn*rb; i++)
+            {
+                arr[i]=L[lb];
+            }
+            L[rb]=0;
+            block[rb]=INT_MAX;
+            for(int i=rn*(rb-1)+1; i<=rn*rb; i++)
+            {
+                block[rb]=min(block[rb],arr[i]);
+            }
+        }
+        for(int i=max(l,rn*(rb-1)+1); i<=r; i++)
+        {
+            minn=min(minn,arr[i]);
+        }
+    }
+    else
+    {
+        for(int i=rn*(rb-1)+1; i<=r; i++)
+        {
+            minn=min(minn,arr[i]);
+        }
+    }
+
+
+
+    return minn;
+}
+int update(int l,int r,int value)
+{
+    int lb=(l-1)/rn+1;
+    int rb=(r-1)/rn+1;
+    for(int i=lb+1; i<=rb-1; i++)
+    {
+        L[i]=value;
+    }
+    if(L[lb])
+    {
+        for(int i=rn*(lb-1)+1; i<=rn*lb; i++)
+        {
+            arr[i]=L[lb];
+        }
+        L[lb]=0;
+
+    }
+    for(int i=l; i<=min(r,lb*rn); i++)
+    {
+        arr[i]=value;
+    }
+    block[lb]=INT_MAX;
+    for(int i=(lb-1)*rn+1; i<=lb*rn; i++)
+    {
+        block[i]=min(block[i],arr[i]);
+    }
+    if(rb<=rn)
+    {
+        if(L[rb])
+        {
+            for(int i=rn*(rb-1)+1; i<=rn*rb; i++)
+            {
+                arr[i]=L[rb];
+            }
+            L[rb]=0;
+
+        }
+        for(int i=max(l,rn*(rb-1)+1); i<=r; i++)
+        {
+            arr[i]=value;
+
+        }
+        block[rb]=INT_MAX;
+        for(int i=(rb-1)*rn+1; i<=rb*rn; i++)
+        {
+            block[i]=min(block[i],arr[i]);
+        }
+    }
+    else
+    {
+        for(int i=rn*(rb-1)+1; i<=r; i++)
+        {
+            arr[i]=value;
+        }
+    }
+
+}
+int main()
+{
+    int nn;
+    cout<<"Enter total number\n";
+    cin>>nn;
+    cout<<"Enter the numbers\n";
+    for(int i=1; i<=nn; i++)
+    {
+        cin>>arr[i];
+    }
+    rn=sqrt(nn);
+    int bsize=n/rn;
+    for(int i=1; i<=bsize; i++)
+    {
+        int mn=INT_MAX;
+
+        for(int j=(i-1)*rn+1; j<=i*rn; j++)
+        {
+            if(arr[j]<mn)
+            {
+                mn=arr[i];
+                block[i]=mn;
+
+            }
+        }
+    }
+    int q;
+    cout<<"Enter total query\n";
+    cin>>q;
+    cout<<"Press 1 to perform query\n";
+    cout<<"Press 2 to perform update\n";
+    while(q--)
+    {
+        int opt;
+        cin>>opt;
+        if(opt==1)
+        {
+            int l,r;
+            cin>>l>>r;
+            int t=(l-1)/rn+1;
+
+            if(t>rn)
+            {
+                int minn=INT_MAX;
+                for(int i=l; i<=r; i++)
+                {
+                    minn=min(minn,arr[i]);
+                }
+
+            }
+            else
+            {
+                cout<<Query(l,r)<<N;
+            }
+
+        }
+        else if(opt==2)
+        {
+            int l,r,value;
+            cin>>l>>r>>value;
+            int t=(l-1)/rn+1;
+            if(t>rn)
+            {
+                for(int i=l; i<=r; i++)
+                {
+                    arr[i]=value;
+                }
+
+            }
+            else
+            {
+                cout<<6<<N;
+                update(l,r,value);
+            }
+
+
+        }
+    }
+}
